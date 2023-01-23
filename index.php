@@ -1,5 +1,5 @@
 <?php
-require_once "../db/koneksi.php";
+require_once "db/koneksi.php";
 
 //ambil data dari tabel
 $result = mysqli_query($conn, "SELECT * FROM mahasiswa");
@@ -21,6 +21,7 @@ if (isset($_POST['cari'])) {
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -47,14 +48,14 @@ if (isset($_POST['cari'])) {
                 </button>
                 <strong>Data berhasil diedit</strong>
             </div>
-        <?php } elseif(isset($_GET['gagal']) == 'notice') { ?>
+        <?php } elseif (isset($_GET['gagal']) == 'notice') { ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <button type="button" class="close" onclick="refreshPage()" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <strong>Upload gambar terlebih dahulu!</strong>
             </div>
-        <?php }?>
+        <?php } ?>
         <div class="table-responsive">
             <a href="#" data-toggle="modal" data-target="#tambahdata" class="btn btn-info mb-2">Tambah Data</a>
             <form action="" method="post">
@@ -82,13 +83,13 @@ if (isset($_POST['cari'])) {
                 </thead>
                 <tbody>
                     <?php
-                        $i = 1;
-                        while ($row = mysqli_fetch_assoc($result)) :
+                    $i = 1;
+                    while ($row = mysqli_fetch_assoc($result)) :
                     ?>
                         <tr>
                             <td scope="row"><?= $i++ ?></td>
                             <td hidden><?= $row['Id'] ?></td>
-                            <td><img src="../img/<?= $row['gambar'] ?>" class="img-fluid" width="80" height="80" alt=""></td>
+                            <td><img src="img/<?= $row['gambar'] ?>" width="80" height="60" alt=""></td>
                             <td><?= $row['nrp'] ?></td>
                             <td><?= $row['nama'] ?></td>
                             <td><?= $row['email'] ?></td>
@@ -119,6 +120,7 @@ if (isset($_POST['cari'])) {
                             </div>
                         </div>
                         <!-- end modal hapus data -->
+
                         <!-- modal edit data -->
                         <div class="modal fade" id="editdata<?= $i ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -129,11 +131,10 @@ if (isset($_POST['cari'])) {
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <form action="function_modal.php?act=editdata" method="post">
+                                    <form action="function_modal.php?act=editdata" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="Id" value="<?= $row['Id'] ?>">
+                                        <input type="hidden" name="gblama" value="<?= $row['gambar'] ?>">
                                         <div class="modal-body">
-                                            <div class="form-group">
-                                                <input type="text" name="Id" hidden value="<?= $row['Id'] ?>">
-                                            </div>
                                             <div class="form-group">
                                                 <label for="nrp">NRP</label>
                                                 <input type="text" name="nrp" id="nrp" class="form-control" placeholder="masukkan nrp anda" value="<?= $row['nrp'] ?>" required>
@@ -151,11 +152,14 @@ if (isset($_POST['cari'])) {
                                                 <input type="text" name="jurusan" id="jurusan" class="form-control" placeholder="masukkan Jurusan" value="<?= $row['jurusan'] ?>" aria-describedby="helpId" required>
                                             </div>
                                             <div class="form-group">
-                                                <label for="gambar">Gambar</label>
-                                                <input type="text" name="gambar" id="gambar" class="form-control" placeholder="masukkan nama gambar" value="<?= $row['gambar'] ?>" aria-describedby="helpId" required>
+                                                <label for="inputGroupFile02">Gambar</label><br />
+                                                <img src="img/<?= $row['gambar'] ?>" width="100px" height="80px" alt="image">
+                                                <div class="custom-file mt-1">
+                                                    <input type="file" name="gambar" class="custom-file-input" id="inputGroupFile02">
+                                                    <label class="custom-file-label col-8" for="inputGroupFile02">Choose file</label>
+                                                </div>
                                             </div>
                                         </div>
-
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                             <button type="submit" class="btn btn-info">Update</button>
@@ -198,11 +202,11 @@ if (isset($_POST['cari'])) {
                                     <input type="text" name="jurusan" id="jurusan" class="form-control" placeholder="masukkan Jurusan" aria-describedby="helpId" required>
                                 </div>
                                 <div class="form-group">
-                                        <label for="inputfile">Upload</label>
-                                        <div class="custom-file">
-                                            <input type="file" name="gambar" class="custom-file-input" id="inputfile">
-                                            <label class="custom-file-label col-6" for="inputfile">Choose file</label>
-                                        </div>                              
+                                    <label for="inputGroupFile">Upload</label>
+                                    <div class="custom-file">
+                                        <input type="file" name="gambar" class="custom-file-input" id="inputGroupFile" />
+                                        <label class="custom-file-label" for="inputGroupFile">Choose file</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -220,14 +224,29 @@ if (isset($_POST['cari'])) {
 
 
     <!-- Optional JavaScript -->
-    <script>
-        function refreshPage(){
+    <script type="application/javascript">
+        function refreshPage() {
             window.location.href = "index.php";
         }
+
+        // menampilkan nama file upload
+        $('#inputGroupFile').on('change', function() {
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
+
+        $('#inputGroupFile02').on('change', function() {
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
     </script>
- 
+
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
